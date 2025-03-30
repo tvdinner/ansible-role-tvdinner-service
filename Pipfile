@@ -12,4 +12,4 @@ docsible = "*"
 python_version = "3.13"
 
 [scripts]
-docs = "docsible --role ."
+docs = "docsible -r ./ -g -o README.md -com -nob"

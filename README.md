@@ -53,49 +53,173 @@ Description: Install and configure a Docker service using a simple self-hosted a
 
 #### File: tasks/setup_docker_compose.yml
 
-| Name | Module | Has Conditions |
-| ---- | ------ | --------- |
-| Configure Docker Compose | community.docker.docker_compose_v2 | False |
+| Name | Module | Has Conditions | Comments |
+| ---- | ------ | --------- |  -------- |
+| Configure Docker Compose | community.docker.docker_compose_v2 | False | Apply the Docker Compose file rendered from template |
 
 #### File: tasks/setup_bind_mounts.yml
 
-| Name | Module | Has Conditions |
-| ---- | ------ | --------- |
-| Create main directory | file | False |
-| Create sub-directories | file | False |
+| Name | Module | Has Conditions | Comments |
+| ---- | ------ | --------- |  -------- |
+| Create main directory | file | False | Create top-level directory for the bind mounts |
+| Create sub-directories | file | False | Create one directory for each bind mount exposed as a volume |
 
 #### File: tasks/setup_postgres.yml
 
-| Name | Module | Has Conditions |
-| ---- | ------ | --------- |
-| Create service databases | community.postgresql.postgresql_db | False |
-| Create DB service accounts | community.postgresql.postgresql_user | False |
-| Grant DB service accounts ALL on databases | community.postgresql.postgresql_privs | False |
+| Name | Module | Has Conditions | Comments |
+| ---- | ------ | --------- |  -------- |
+| Create service databases | community.postgresql.postgresql_db | False |  |
+| Create DB service accounts | community.postgresql.postgresql_user | False |  |
+| Grant DB service accounts ALL on databases | community.postgresql.postgresql_privs | False |  |
 
 #### File: tasks/setup_dns.yml
 
-| Name | Module | Has Conditions |
-| ---- | ------ | --------- |
-| Create DNS record | amazon.aws.route53 | False |
+| Name | Module | Has Conditions | Comments |
+| ---- | ------ | --------- |  -------- |
+| Create DNS record | amazon.aws.route53 | False | Create a DNS record pointing to the host |
 
 #### File: tasks/setup_mysql.yml
 
-| Name | Module | Has Conditions |
-| ---- | ------ | --------- |
-| Create service databases | mysql_db | False |
-| Create DB service accounts | mysql_user | False |
+| Name | Module | Has Conditions | Comments |
+| ---- | ------ | --------- |  -------- |
+| Create service databases | mysql_db | False |  |
+| Create DB service accounts | mysql_user | False |  |
 
 #### File: tasks/main.yml
 
-| Name | Module | Has Conditions |
-| ---- | ------ | --------- |
-| Set up folders for bind mounts | include_tasks | False |
-| Setup MySQL database | include_tasks | True |
-| Setup PostgreSQL database | include_tasks | True |
-| Configure Docker Compose | include_tasks | False |
-| Set up DNS using Route53 | include_tasks | False |
+| Name | Module | Has Conditions | Comments |
+| ---- | ------ | --------- |  -------- |
+| Set up folders for bind mounts | include_tasks | False |  |
+| Setup MySQL database | include_tasks | True | Only set up MySQL if `service_db_type` is `mysql`. |
+| Setup PostgreSQL database | include_tasks | True | Only set up MySQL if `service_db_type` is `postgres`. |
+| Configure Docker Compose | include_tasks | False |  |
+| Set up DNS using Route53 | include_tasks | False |  |
 
 
+## Task Flow Graphs
+
+
+
+### Graph for setup_docker_compose.yml
+
+```mermaid
+flowchart TD
+Start
+classDef block stroke:#3498db,stroke-width:2px;
+classDef task stroke:#4b76bb,stroke-width:2px;
+classDef includeTasks stroke:#16a085,stroke-width:2px;
+classDef importTasks stroke:#34495e,stroke-width:2px;
+classDef includeRole stroke:#2980b9,stroke-width:2px;
+classDef importRole stroke:#699ba7,stroke-width:2px;
+classDef includeVars stroke:#8e44ad,stroke-width:2px;
+classDef rescue stroke:#665352,stroke-width:2px;
+
+  Start-->|Task| Configure_Docker_Compose0[configure docker compose]:::task
+  Configure_Docker_Compose0-->End
+```
+
+
+### Graph for setup_bind_mounts.yml
+
+```mermaid
+flowchart TD
+Start
+classDef block stroke:#3498db,stroke-width:2px;
+classDef task stroke:#4b76bb,stroke-width:2px;
+classDef includeTasks stroke:#16a085,stroke-width:2px;
+classDef importTasks stroke:#34495e,stroke-width:2px;
+classDef includeRole stroke:#2980b9,stroke-width:2px;
+classDef importRole stroke:#699ba7,stroke-width:2px;
+classDef includeVars stroke:#8e44ad,stroke-width:2px;
+classDef rescue stroke:#665352,stroke-width:2px;
+
+  Start-->|Task| Create_main_directory0[create main directory]:::task
+  Create_main_directory0-->|Task| Create_sub_directories1[create sub directories]:::task
+  Create_sub_directories1-->End
+```
+
+
+### Graph for setup_postgres.yml
+
+```mermaid
+flowchart TD
+Start
+classDef block stroke:#3498db,stroke-width:2px;
+classDef task stroke:#4b76bb,stroke-width:2px;
+classDef includeTasks stroke:#16a085,stroke-width:2px;
+classDef importTasks stroke:#34495e,stroke-width:2px;
+classDef includeRole stroke:#2980b9,stroke-width:2px;
+classDef importRole stroke:#699ba7,stroke-width:2px;
+classDef includeVars stroke:#8e44ad,stroke-width:2px;
+classDef rescue stroke:#665352,stroke-width:2px;
+
+  Start-->|Task| Create_service_databases0[create service databases]:::task
+  Create_service_databases0-->|Task| Create_DB_service_accounts1[create db service accounts]:::task
+  Create_DB_service_accounts1-->|Task| Grant_DB_service_accounts_ALL_on_databases2[grant db service accounts all on databases]:::task
+  Grant_DB_service_accounts_ALL_on_databases2-->End
+```
+
+
+### Graph for setup_dns.yml
+
+```mermaid
+flowchart TD
+Start
+classDef block stroke:#3498db,stroke-width:2px;
+classDef task stroke:#4b76bb,stroke-width:2px;
+classDef includeTasks stroke:#16a085,stroke-width:2px;
+classDef importTasks stroke:#34495e,stroke-width:2px;
+classDef includeRole stroke:#2980b9,stroke-width:2px;
+classDef importRole stroke:#699ba7,stroke-width:2px;
+classDef includeVars stroke:#8e44ad,stroke-width:2px;
+classDef rescue stroke:#665352,stroke-width:2px;
+
+  Start-->|Task| Create_DNS_record0[create dns record]:::task
+  Create_DNS_record0-->End
+```
+
+
+### Graph for setup_mysql.yml
+
+```mermaid
+flowchart TD
+Start
+classDef block stroke:#3498db,stroke-width:2px;
+classDef task stroke:#4b76bb,stroke-width:2px;
+classDef includeTasks stroke:#16a085,stroke-width:2px;
+classDef importTasks stroke:#34495e,stroke-width:2px;
+classDef includeRole stroke:#2980b9,stroke-width:2px;
+classDef importRole stroke:#699ba7,stroke-width:2px;
+classDef includeVars stroke:#8e44ad,stroke-width:2px;
+classDef rescue stroke:#665352,stroke-width:2px;
+
+  Start-->|Task| Create_service_databases0[create service databases]:::task
+  Create_service_databases0-->|Task| Create_DB_service_accounts1[create db service accounts]:::task
+  Create_DB_service_accounts1-->End
+```
+
+
+### Graph for main.yml
+
+```mermaid
+flowchart TD
+Start
+classDef block stroke:#3498db,stroke-width:2px;
+classDef task stroke:#4b76bb,stroke-width:2px;
+classDef includeTasks stroke:#16a085,stroke-width:2px;
+classDef importTasks stroke:#34495e,stroke-width:2px;
+classDef includeRole stroke:#2980b9,stroke-width:2px;
+classDef importRole stroke:#699ba7,stroke-width:2px;
+classDef includeVars stroke:#8e44ad,stroke-width:2px;
+classDef rescue stroke:#665352,stroke-width:2px;
+
+  Start-->|Include task| setup_bind_mounts_yml0[set up folders for bind mounts<br>include_task: setup bind mounts yml]:::includeTasks
+  setup_bind_mounts_yml0-->|Include task| setup_mysql_yml1[setup mysql database<br>When: **tvdinner service db type     mysql**<br>include_task: setup mysql yml]:::includeTasks
+  setup_mysql_yml1-->|Include task| setup_postgres_yml2[setup postgresql database<br>When: **tvdinner service db type     postgres**<br>include_task: setup postgres yml]:::includeTasks
+  setup_postgres_yml2-->|Include task| setup_docker_compose_yml3[configure docker compose<br>include_task: setup docker compose yml]:::includeTasks
+  setup_docker_compose_yml3-->|Include task| setup_dns_yml4[set up dns using route53<br>include_task: setup dns yml]:::includeTasks
+  setup_dns_yml4-->End
+```
 
 
 ## Playbook
@@ -108,7 +232,11 @@ Description: Install and configure a Docker service using a simple self-hosted a
     - ansible-role-tvdinner-service
 
 ```
-
+## Playbook graph
+```mermaid
+flowchart TD
+  localhost-->|Role| ansible_role_tvdinner_service[ansible role tvdinner service]
+```
 
 ## Author Information
 Joe Stump <joe@joestump.net>

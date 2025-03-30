@@ -2,10 +2,12 @@
 - name: Set up folders for bind mounts
   include_tasks: setup_bind_mounts.yml
 
+# Only set up MySQL if `service_db_type` is `mysql`.
 - name: Setup MySQL database
   include_tasks: setup_mysql.yml
   when: tvdinner_service_db_type == "mysql"
 
+# Only set up MySQL if `service_db_type` is `postgres`.
 - name: Setup PostgreSQL database
   include_tasks: setup_postgres.yml
   when: tvdinner_service_db_type == "postgres"

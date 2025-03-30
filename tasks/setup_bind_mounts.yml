@@ -1,8 +1,10 @@
+# Create top-level directory for the bind mounts
 - name: Create main directory
   file:
     path: "{{ tvdinner_service_mounts_path }}/{{ tvdinner_service_dns }}.{{ tvdinner_service_dns_zone }}"
     state: directory
 
+# Create one directory for each bind mount exposed as a volume
 - name: Create sub-directories
   file:
     path: "{{ tvdinner_service_mounts_path }}/{{ tvdinner_service_dns }}.{{ tvdinner_service_dns_zone }}/{{ item | basename }}"
