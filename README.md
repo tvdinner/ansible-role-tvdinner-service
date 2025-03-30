@@ -1,38 +1,128 @@
-TV Dinner Service
-=================
+<!-- DOCSIBLE START -->
 
-Stands up a Docker container using the TV Dinner self-hosted pattern.
+# 📃 Role overview
 
-Requirements
-------------
+## ansible-role-tvdinner-service
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
 
-Role Variables
---------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+Description: Install and configure a Docker service using a simple self-hosted approach
 
-Dependencies
-------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+| Field                | Value           |
+|--------------------- |-----------------|
+| Readme update        | 30/03/2025 |
 
-Example Playbook
-----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
 
-License
--------
 
-BSD
 
-Author Information
-------------------
+### Defaults
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+**These are static variables with lower priority**
+
+#### File: defaults/main.yml
+
+| Var          | Type         | Value       |Required    | Title       |
+|--------------|--------------|-------------|-------------|-------------|
+| [tvdinner_service_name](defaults/main.yml#L2)   | str   | `my_service` |    n/a  |  n/a |
+| [tvdinner_service_image](defaults/main.yml#L3)   | str   | `my_image:latest` |    n/a  |  n/a |
+| [tvdinner_service_enabled](defaults/main.yml#L4)   | bool   | `True` |    n/a  |  n/a |
+| [tvdinner_service_dns](defaults/main.yml#L5)   | str   | `my_service` |    n/a  |  n/a |
+| [tvdinner_service_dns_zone](defaults/main.yml#L6)   | str   | `example.com` |    n/a  |  n/a |
+| [tvdinner_service_port](defaults/main.yml#L7)   | int   | `8080` |    n/a  |  n/a |
+| [tvdinner_service_db_type](defaults/main.yml#L8)   | str   | `sqlite` |    n/a  |  n/a |
+| [tvdinner_service_db_name](defaults/main.yml#L9)   | str   | `my_db` |    n/a  |  n/a |
+| [tvdinner_service_db_user](defaults/main.yml#L10)   | str   | `db_user` |    n/a  |  n/a |
+| [tvdinner_service_db_password](defaults/main.yml#L11)   | str   | `db_pass` |    n/a  |  n/a |
+| [tvdinner_service_watchtower](defaults/main.yml#L12)   | bool   | `True` |    n/a  |  n/a |
+| [tvdinner_service_homepage](defaults/main.yml#L13)   | dict   | `{'group': 'Services', 'name': 'My Service', 'description': 'My Service Description', 'icon': 'my_icon', 'weight': 100}` |    n/a  |  n/a |
+| [tvdinner_service_nvidia_gpu](defaults/main.yml#L19)   | bool   | `False` |    n/a  |  n/a |
+| [tvdinner_service_routing_mode](defaults/main.yml#L20)   | str   | `caddy` |    n/a  |  n/a |
+| [tvdinner_service_env_vars](defaults/main.yml#L21)   | dict   | `{}` |    n/a  |  n/a |
+| [tvdinner_service_mounts](defaults/main.yml#L22)   | list   | `[]` |    n/a  |  n/a |
+| [tvdinner_service_mounts_path](defaults/main.yml#L23)   | str   | `/volumes` |    n/a  |  n/a |
+
+
+
+
+
+### Tasks
+
+
+#### File: tasks/setup_docker_compose.yml
+
+| Name | Module | Has Conditions |
+| ---- | ------ | --------- |
+| Configure Docker Compose | community.docker.docker_compose_v2 | False |
+
+#### File: tasks/setup_bind_mounts.yml
+
+| Name | Module | Has Conditions |
+| ---- | ------ | --------- |
+| Create main directory | file | False |
+| Create sub-directories | file | False |
+
+#### File: tasks/setup_postgres.yml
+
+| Name | Module | Has Conditions |
+| ---- | ------ | --------- |
+| Create service databases | community.postgresql.postgresql_db | False |
+| Create DB service accounts | community.postgresql.postgresql_user | False |
+| Grant DB service accounts ALL on databases | community.postgresql.postgresql_privs | False |
+
+#### File: tasks/setup_dns.yml
+
+| Name | Module | Has Conditions |
+| ---- | ------ | --------- |
+| Create DNS record | amazon.aws.route53 | False |
+
+#### File: tasks/setup_mysql.yml
+
+| Name | Module | Has Conditions |
+| ---- | ------ | --------- |
+| Create service databases | mysql_db | False |
+| Create DB service accounts | mysql_user | False |
+
+#### File: tasks/main.yml
+
+| Name | Module | Has Conditions |
+| ---- | ------ | --------- |
+| Set up folders for bind mounts | include_tasks | False |
+| Setup MySQL database | include_tasks | True |
+| Setup PostgreSQL database | include_tasks | True |
+| Configure Docker Compose | include_tasks | False |
+| Set up DNS using Route53 | include_tasks | False |
+
+
+
+
+## Playbook
+
+```yml
+---
+- hosts: localhost
+  remote_user: root
+  roles:
+    - ansible-role-tvdinner-service
+
+```
+
+
+## Author Information
+Joe Stump <joe@joestump.net>
+
+#### License
+
+MIT
+
+#### Minimum Ansible Version
+
+2.9
+
+#### Platforms
+
+- **Ubuntu**: ['jammy', 'luna']
+
+<!-- DOCSIBLE END -->
