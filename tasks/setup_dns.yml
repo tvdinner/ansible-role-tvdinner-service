@@ -1,0 +1,9 @@
+- name: Create DNS record
+  amazon.aws.route53:
+    state: "{{ tvdinner_service_enabled | ternary('present', 'absent') }}"
+    overwrite: true
+    zone: "{{ tvdinner_service_dns_zone }}"
+    record: "{{ tvdinner_service_dns }}.{{ tvdinner_service_dns_zone }}"
+    type: CNAME
+    value: "{{ inventory_hostname }}.{{ tvdinner_service_dns_zone }}"
+    ttl: 60

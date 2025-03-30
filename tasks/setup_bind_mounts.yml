@@ -1,0 +1,10 @@
+- name: Create main directory
+  file:
+    path: "{{ tvdinner_service_mounts_path }}/{{ tvdinner_service_dns }}.{{ tvdinner_service_dns_zone }}"
+    state: directory
+
+- name: Create sub-directories
+  file:
+    path: "{{ tvdinner_service_mounts_path }}/{{ tvdinner_service_dns }}.{{ tvdinner_service_dns_zone }}/{{ item | basename }}"
+    state: directory
+  loop: "{{ tvdinner_service_mounts }}"

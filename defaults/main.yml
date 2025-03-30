@@ -1,0 +1,23 @@
+---
+tvdinner_service_name: my_service
+tvdinner_service_image: "my_image:latest"
+tvdinner_service_enabled: true
+tvdinner_service_dns: "my_service"
+tvdinner_service_dns_zone: "example.com"
+tvdinner_service_port: 8080
+tvdinner_service_db_type: "sqlite"  # or "mysql" or "postgres"
+tvdinner_service_db_name: "my_db"
+tvdinner_service_db_user: "db_user"
+tvdinner_service_db_password: "db_pass"
+tvdinner_service_watchtower: true
+tvdinner_service_homepage:
+  group: "Services"
+  name: "My Service"
+  description: "My Service Description"
+  icon: "my_icon"
+  weight: 100
+tvdinner_service_nvidia_gpu: false
+tvdinner_service_routing_mode: "caddy"  # or "wireguard"
+tvdinner_service_env_vars: {}
+tvdinner_service_mounts: []
+tvdinner_service_mounts_path: "/volumes"

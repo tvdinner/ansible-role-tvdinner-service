@@ -1,0 +1,9 @@
+# - name: Debug rendered docker-compose template
+#   debug:
+#    var: lookup('template', 'docker-compose.yml.j2')
+
+- name: Configure Docker Compose
+  community.docker.docker_compose_v2:
+    project_name: "{{ tvdinner_service_name }}"
+    state: "{{ tvdinner_service_enabled | ternary('present', 'absent') }}"
+    definition: "{{ lookup('template', 'docker-compose.yml.j2') | from_yaml }}"

@@ -1,0 +1,20 @@
+---
+- name: Create service databases
+  mysql_db:
+    state: present
+    name: "{{ tvdinner_service_db_name }}"
+    login_host: "{{ tvdinner_service_db_host }}"
+    login_user: "{{ tvdinner_service_db_login_user }}"
+    login_password: "{{ tvdinner_service_db_login_pass }}"
+
+- name: Create DB service accounts 
+  mysql_user:
+    state: present
+    column_case_sensitive: true
+    name: "{{ tvdinner_service_db_user }}"
+    password: "{{ tvdinner_service_db_password }}"
+    host: '%'
+    priv: "{{ tvdinner_service_db_name }}.*:ALL"
+    login_host: "{{ tvdinner_service_db_host }}"
+    login_user: "{{ tvdinner_service_db_login_user }}"
+    login_password: "{{ tvdinner_service_db_login_pass }}"

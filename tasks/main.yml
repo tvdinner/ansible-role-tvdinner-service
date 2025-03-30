@@ -1,0 +1,17 @@
+---
+- name: Set up folders for bind mounts
+  include_tasks: setup_bind_mounts.yml
+
+- name: Setup MySQL database
+  include_tasks: setup_mysql.yml
+  when: tvdinner_service_db_type == "mysql"
+
+- name: Setup PostgreSQL database
+  include_tasks: setup_postgres.yml
+  when: tvdinner_service_db_type == "postgres"
+
+- name: Configure Docker Compose
+  include_tasks: setup_docker_compose.yml
+
+- name: Set up DNS using Route53
+  include_tasks: setup_dns.yml

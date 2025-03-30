@@ -1,0 +1,45 @@
+services:
+  {{ tvdinner_service_name | default(tvdinner_service_dns) }}:
+    image: "{{ tvdinner_service_image }}"
+    container_name: "{{ tvdinner_service_name | default(tvdinner_service_dns) }}"
+
+    {% if tvdinner_service_routing_mode == 'caddy' -%}
+    networks:
+      - caddy
+    {% else %}
+    network_mode: service:wireguard
+    {% endif %}
+
+    labels:
+      homepage.group: "{{ tvdinner_service_homepage.group }}"
+      homepage.name: "{{ tvdinner_service_homepage.name | default(tvdinner_service_homepage.icon | capitalize)}}"
+      homepage.icon: "{{ tvdinner_service_homepage.icon }}"
+      homepage.href: "https://{{ tvdinner_service_dns }}.{{ tvdinner_service_dns_zone }}"
+      homepage.description: "{{ tvdinner_service_homepage.description | default('') }}"
+      homepage.weight: "{{ tvdinner_service_homepage.weight | default(100) }}"
+      com.centurylinklabs.watchtower.enable: "{{ tvdinner_service_watchtower | default('true') }}"
+      {% if tvdinner_service_routing_mode == 'caddy' -%}
+      caddy: "{{ tvdinner_service_dns }}.{{ tvdinner_service_dns_zone }}"
+      caddy.reverse_proxy: "{{ '{{' }}upstreams {{ tvdinner_service_port }}{{ '}}' }}"
+      {% endif %}
+
+    environment:
+      {% for key, value in tvdinner_service_env_vars.items() -%}
+      {{ key }}: "{{ value }}"
+      {% endfor %}
+
+    volumes:
+      {% for item in tvdinner_service_mounts -%}
+      - "{{ tvdinner_service_mounts_path }}/{{ tvdinner_service_dns }}.{{ tvdinner_service_dns_zone }}/{{ item | basename }}:{{ item }}"
+      {% endfor %}
+
+    restart: unless-stopped
+    {% if tvdinner_service_nvidia_gpu %}
+    runtime: nvidia
+    {% endif %}
+
+{% if tvdinner_service_routing_mode == 'caddy' %}
+networks:
+  caddy:
+    external: true
+{% endif %}
