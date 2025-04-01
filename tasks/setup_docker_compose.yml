@@ -1,6 +1,6 @@
 # Apply the Docker Compose file rendered from template
 - name: Configure Docker Compose
   community.docker.docker_compose_v2:
-    project_name: "{{ tvdinner_service_name }}"
-    state: "{{ tvdinner_service_enabled | ternary('present', 'absent') }}"
+    project_name: "{{ service_name }}"
+    state: "{{ service_enabled | ternary('present', 'absent') }}"
     definition: "{{ lookup('template', 'docker-compose.yml.j2') | from_yaml }}"

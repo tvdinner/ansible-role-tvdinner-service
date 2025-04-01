@@ -26,23 +26,19 @@ Description: Install and configure a Docker service using a simple self-hosted a
 
 | Var          | Type         | Value       |Required    | Title       |
 |--------------|--------------|-------------|-------------|-------------|
-| [tvdinner_service_name](defaults/main.yml#L2)   | str   | `my_service` |    n/a  |  n/a |
-| [tvdinner_service_image](defaults/main.yml#L3)   | str   | `my_image:latest` |    n/a  |  n/a |
-| [tvdinner_service_enabled](defaults/main.yml#L4)   | bool   | `True` |    n/a  |  n/a |
-| [tvdinner_service_dns](defaults/main.yml#L5)   | str   | `my_service` |    n/a  |  n/a |
-| [tvdinner_service_dns_zone](defaults/main.yml#L6)   | str   | `example.com` |    n/a  |  n/a |
-| [tvdinner_service_port](defaults/main.yml#L7)   | int   | `8080` |    n/a  |  n/a |
-| [tvdinner_service_db_type](defaults/main.yml#L8)   | str   | `sqlite` |    n/a  |  n/a |
-| [tvdinner_service_db_name](defaults/main.yml#L9)   | str   | `my_db` |    n/a  |  n/a |
-| [tvdinner_service_db_user](defaults/main.yml#L10)   | str   | `db_user` |    n/a  |  n/a |
-| [tvdinner_service_db_password](defaults/main.yml#L11)   | str   | `db_pass` |    n/a  |  n/a |
-| [tvdinner_service_watchtower](defaults/main.yml#L12)   | bool   | `True` |    n/a  |  n/a |
-| [tvdinner_service_homepage](defaults/main.yml#L13)   | dict   | `{'group': 'Services', 'name': 'My Service', 'description': 'My Service Description', 'icon': 'my_icon', 'weight': 100}` |    n/a  |  n/a |
-| [tvdinner_service_nvidia_gpu](defaults/main.yml#L19)   | bool   | `False` |    n/a  |  n/a |
-| [tvdinner_service_routing_mode](defaults/main.yml#L20)   | str   | `caddy` |    n/a  |  n/a |
-| [tvdinner_service_env_vars](defaults/main.yml#L21)   | dict   | `{}` |    n/a  |  n/a |
-| [tvdinner_service_mounts](defaults/main.yml#L22)   | list   | `[]` |    n/a  |  n/a |
-| [tvdinner_service_mounts_path](defaults/main.yml#L23)   | str   | `/volumes` |    n/a  |  n/a |
+| [service_name](defaults/main.yml#L3)   | str   | `my_service` |    n/a  |  n/a |
+| [service_image](defaults/main.yml#L6)   | str   | `my_image:latest` |    n/a  |  n/a |
+| [service_port](defaults/main.yml#L9)   | int   | `8080` |    n/a  |  n/a |
+| [service_enabled](defaults/main.yml#L12)   | bool   | `True` |    n/a  |  n/a |
+| [service_dns](defaults/main.yml#L15)   | dict   | `{'name': 'my_service', 'zone': 'example.com'}` |    n/a  |  n/a |
+| [service_db](defaults/main.yml#L20)   | dict   | `{'type': 'sqlite', 'name': 'my_db', 'user': 'db_user', 'password': 'db_pass'}` |    n/a  |  n/a |
+| [service_watchtower](defaults/main.yml#L27)   | bool   | `True` |    n/a  |  n/a |
+| [service_homepage](defaults/main.yml#L30)   | dict   | `{'group': 'Services', 'name': 'My Service', 'description': 'My Service Description', 'icon': 'my_icon', 'weight': 100}` |    n/a  |  n/a |
+| [service_nvidia_gpu](defaults/main.yml#L38)   | bool   | `False` |    n/a  |  n/a |
+| [service_routing_mode](defaults/main.yml#L41)   | str   | `caddy` |    n/a  |  n/a |
+| [service_env_vars](defaults/main.yml#L44)   | dict   | `{}` |    n/a  |  n/a |
+| [service_mounts](defaults/main.yml#L47)   | list   | `[]` |    n/a  |  n/a |
+| [service_mounts_path](defaults/main.yml#L48)   | str   | `/volumes` |    n/a  |  n/a |
 
 
 
@@ -93,7 +89,7 @@ Description: Install and configure a Docker service using a simple self-hosted a
 | Setup MySQL database | include_tasks | True | Only set up MySQL if `service_db_type` is `mysql`. |
 | Setup PostgreSQL database | include_tasks | True | Only set up MySQL if `service_db_type` is `postgres`. |
 | Configure Docker Compose | include_tasks | False |  |
-| Set up DNS using Route53 | include_tasks | False |  |
+| Set up DNS using Route53 | include_tasks | True | Only set up DNS using Route53 if `service_dns_type` is `route53`. |
 
 
 ## Task Flow Graphs
@@ -214,10 +210,10 @@ classDef includeVars stroke:#8e44ad,stroke-width:2px;
 classDef rescue stroke:#665352,stroke-width:2px;
 
   Start-->|Include task| setup_bind_mounts_yml0[set up folders for bind mounts<br>include_task: setup bind mounts yml]:::includeTasks
-  setup_bind_mounts_yml0-->|Include task| setup_mysql_yml1[setup mysql database<br>When: **tvdinner service db type     mysql**<br>include_task: setup mysql yml]:::includeTasks
-  setup_mysql_yml1-->|Include task| setup_postgres_yml2[setup postgresql database<br>When: **tvdinner service db type     postgres**<br>include_task: setup postgres yml]:::includeTasks
+  setup_bind_mounts_yml0-->|Include task| setup_mysql_yml1[setup mysql database<br>When: **service db type     mysql**<br>include_task: setup mysql yml]:::includeTasks
+  setup_mysql_yml1-->|Include task| setup_postgres_yml2[setup postgresql database<br>When: **service db type     postgres**<br>include_task: setup postgres yml]:::includeTasks
   setup_postgres_yml2-->|Include task| setup_docker_compose_yml3[configure docker compose<br>include_task: setup docker compose yml]:::includeTasks
-  setup_docker_compose_yml3-->|Include task| setup_dns_yml4[set up dns using route53<br>include_task: setup dns yml]:::includeTasks
+  setup_docker_compose_yml3-->|Include task| setup_dns_yml4[set up dns using route53<br>When: **service dns type     route53**<br>include_task: setup dns yml]:::includeTasks
   setup_dns_yml4-->End
 ```
 

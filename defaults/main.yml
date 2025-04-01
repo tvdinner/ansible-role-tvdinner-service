@@ -1,23 +1,48 @@
 ---
-tvdinner_service_name: my_service
-tvdinner_service_image: "my_image:latest"
-tvdinner_service_enabled: true
-tvdinner_service_dns: "my_service"
-tvdinner_service_dns_zone: "example.com"
-tvdinner_service_port: 8080
-tvdinner_service_db_type: "sqlite"  # or "mysql" or "postgres"
-tvdinner_service_db_name: "my_db"
-tvdinner_service_db_user: "db_user"
-tvdinner_service_db_password: "db_pass"
-tvdinner_service_watchtower: true
-tvdinner_service_homepage:
+# Name of the service to be deployed
+service_name: my_service
+
+# Docker image to use for the service
+service_image: "my_image:latest"
+
+# Port the service will listen on
+service_port: 8080
+
+# Whether the service should be enabled
+service_enabled: true
+
+# DNS configuration
+service_dns:
+  name: "my_service"
+  zone: "example.com"
+
+# Database configuration
+service_db:
+  type: "sqlite"  # or "mysql" or "postgres"
+  name: "my_db"
+  user: "db_user"
+  password: "db_pass"
+
+# Enable automatic container updates via Watchtower
+service_watchtower: true
+
+# Homepage dashboard configuration
+service_homepage:
   group: "Services"
   name: "My Service"
   description: "My Service Description"
   icon: "my_icon"
   weight: 100
-tvdinner_service_nvidia_gpu: false
-tvdinner_service_routing_mode: "caddy"  # or "wireguard"
-tvdinner_service_env_vars: {}
-tvdinner_service_mounts: []
-tvdinner_service_mounts_path: "/volumes"
+
+# Enable NVIDIA GPU support
+service_nvidia_gpu: false
+
+# Service routing configuration (caddy or wireguard)
+service_routing_mode: "caddy"  # or "wireguard"
+
+# Additional environment variables for the service
+service_env_vars: {}
+
+# Volume mount configurations
+service_mounts: []
+service_mounts_path: "/volumes"

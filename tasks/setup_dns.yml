@@ -1,10 +1,10 @@
 # Create a DNS record pointing to the host
 - name: Create DNS record
   amazon.aws.route53:
-    state: "{{ tvdinner_service_enabled | ternary('present', 'absent') }}"
+    state: "{{ service_enabled | ternary('present', 'absent') }}"
     overwrite: true
-    zone: "{{ tvdinner_service_dns_zone }}"
-    record: "{{ tvdinner_service_dns }}.{{ tvdinner_service_dns_zone }}"
+    zone: "{{ service_dns.zone }}"
+    record: "{{ service_dns.name }}.{{ service_dns.zone }}"
     type: CNAME
     value: "{{ ansible_host }}"
     ttl: 60

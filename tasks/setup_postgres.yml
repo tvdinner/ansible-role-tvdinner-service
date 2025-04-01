@@ -1,29 +1,29 @@
 - name: Create service databases
   community.postgresql.postgresql_db:
-    state: "{{ tvdinner_service_enabled | ternary('present', 'absent') }}"
-    name: "{{ tvdinner_service_db_name }}"
-    login_host: "{{ tvdinner_service_db_host }}"
-    login_user: "{{ tvdinner_service_db_login_user }}"
-    login_password: "{{ tvdinner_service_db_login_pass }}"
+    state: "{{ service_enabled | ternary('present', 'absent') }}"
+    name: "{{ service_db_name }}"
+    login_host: "{{ service_db_host }}"
+    login_user: "{{ service_db_login_user }}"
+    login_password: "{{ service_db_login_pass }}"
 
 - name: Create DB service accounts 
   community.postgresql.postgresql_user:
-    state: "{{ tvdinner_service_enabled | ternary('present', 'absent') }}"
-    db: "{{ tvdinner_service_db_name }}"
-    name: "{{ tvdinner_service_db_user }}"
-    password: "{{ tvdinner_service_db_password }}"
+    state: "{{ service_enabled | ternary('present', 'absent') }}"
+    db: "{{ service_db_name }}"
+    name: "{{ service_db_user }}"
+    password: "{{ service_db_password }}"
     role_attr_flags: SUPERUSER
-    login_host: "{{ tvdinner_service_db_host }}"
-    login_user: "{{ tvdinner_service_db_login_user }}"
-    login_password: "{{ tvdinner_service_db_login_pass }}"
+    login_host: "{{ service_db_host }}"
+    login_user: "{{ service_db_login_user }}"
+    login_password: "{{ service_db_login_pass }}"
 
 - name: Grant DB service accounts ALL on databases
   community.postgresql.postgresql_privs:
-    state: "{{ tvdinner_service_enabled | ternary('present', 'absent') }}"
-    db: "{{ tvdinner_service_db_name }}"
+    state: "{{ service_enabled | ternary('present', 'absent') }}"
+    db: "{{ service_db_name }}"
     privs: ALL
     type: database
-    roles: "{{ tvdinner_service_db_name }}"
-    login_host: "{{ tvdinner_service_db_host }}"
-    login_user: "{{ tvdinner_service_db_login_user }}"
-    login_password: "{{ tvdinner_service_db_login_pass }}"
+    roles: "{{ service_db_name }}"
+    login_host: "{{ service_db_host }}"
+    login_user: "{{ service_db_login_user }}"
+    login_password: "{{ service_db_login_pass }}"

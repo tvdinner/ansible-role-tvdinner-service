@@ -5,15 +5,17 @@
 # Only set up MySQL if `service_db_type` is `mysql`.
 - name: Setup MySQL database
   include_tasks: setup_mysql.yml
-  when: tvdinner_service_db_type == "mysql"
+  when: service_db_type == "mysql"
 
 # Only set up MySQL if `service_db_type` is `postgres`.
 - name: Setup PostgreSQL database
   include_tasks: setup_postgres.yml
-  when: tvdinner_service_db_type == "postgres"
+  when: service_db_type == "postgres"
 
 - name: Configure Docker Compose
   include_tasks: setup_docker_compose.yml
 
+# Only set up DNS using Route53 if `service_dns_type` is `route53`.
 - name: Set up DNS using Route53
   include_tasks: setup_dns.yml
+  when: service_dns_type == "route53"
